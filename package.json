@@ -1,0 +1,48 @@
+{
+  "name": "archidz",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:socket": "node server.js",
+    "build": "next build",
+    "start": "node server.js",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "@prisma/client": "^5.16.0",
+    "next-auth": "^4.24.7",
+    "@auth/prisma-adapter": "^2.4.2",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.3.1",
+    "axios": "^1.7.2",
+    "zod": "^3.23.8",
+    "date-fns": "^3.6.0",
+    "nodemailer": "^6.9.14",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "lucide-react": "^0.414.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.16.0",
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/bcryptjs": "^2.4.6",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5"
+  }
+}

@@ -1,0 +1,282 @@
+// ArchiDZ — Prisma Schema
+// Base de données PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════
+//  UTILISATEURS
+// ═══════════════════════════════════════
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?   // null si OAuth
+  name          String
+  avatar        String?
+  phone         String?
+  wilaya        String?
+  bio           String?
+  role          Role      @default(CLIENT)
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  demandesAsClient   Demande[]     @relation("ClientDemandes")
+  offresAsFreelance  Offre[]       @relation("FreelanceOffres")
+  freelanceProfile   FreelanceProfile?
+  messagesEnvoyes    Message[]     @relation("MessagesSent")
+  avisRecus          Avis[]        @relation("AvisRecus")
+  avisDonnes         Avis[]        @relation("AvisDonnes")
+  paiements          Paiement[]
+  notifications      Notification[]
+
+  @@map("users")
+}
+
+enum Role {
+  CLIENT
+  FREELANCE
+  ADMIN
+}
+
+// ═══════════════════════════════════════
+//  PROFIL FREELANCE
+// ═══════════════════════════════════════
+
+model FreelanceProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  titre        String   // ex: "Expert Rendu 3D Lumion"
+  specialites  String[] // ex: ["Rendu 3D", "Planches", "BIM"]
+  logiciels    String[] // ex: ["Lumion", "SketchUp", "InDesign"]
+  tarifMin     Int      // en DA
+  tarifMax     Int      // en DA
+  portfolio    String[] // URLs Cloudinary
+  experience   Int      @default(0) // années
+  disponible   Boolean  @default(true)
+  noteGlobale  Float    @default(0)
+  totalAvis    Int      @default(0)
+  totalProjets Int      @default(0)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("freelance_profiles")
+}
+
+// ═══════════════════════════════════════
+//  DEMANDES (côté client)
+// ═══════════════════════════════════════
+
+model Demande {
+  id          String        @id @default(cuid())
+  clientId    String
+  client      User          @relation("ClientDemandes", fields: [clientId], references: [id])
+  
+  titre       String
+  description String
+  categorie   Categorie
+  budget      Int           // en DA
+  deadline    DateTime
+  statut      StatutDemande @default(OUVERTE)
+  fichiers    String[]      // URLs des fichiers joints
+  wilaya      String?
+  urgent      Boolean       @default(false)
+  
+  offres      Offre[]
+  projet      Projet?
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("demandes")
+}
+
+enum Categorie {
+  RENDU_3D
+  PLANCHES
+  MAQUETTE_BIM
+  MEMOIRE
+  PORTFOLIO
+  IMPRESSION
+  AUTRE
+}
+
+enum StatutDemande {
+  OUVERTE
+  EN_COURS
+  TERMINEE
+  ANNULEE
+}
+
+// ═══════════════════════════════════════
+//  OFFRES (côté freelance)
+// ═══════════════════════════════════════
+
+model Offre {
+  id           String      @id @default(cuid())
+  demandeId    String
+  demande      Demande     @relation(fields: [demandeId], references: [id])
+  freelanceId  String
+  freelance    User        @relation("FreelanceOffres", fields: [freelanceId], references: [id])
+  
+  prix         Int         // en DA
+  delai        Int         // en jours
+  message      String
+  statut       StatutOffre @default(EN_ATTENTE)
+  
+  projet       Projet?
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("offres")
+}
+
+enum StatutOffre {
+  EN_ATTENTE
+  ACCEPTEE
+  REFUSEE
+  ANNULEE
+}
+
+// ═══════════════════════════════════════
+//  PROJET (demande + offre acceptée)
+// ═══════════════════════════════════════
+
+model Projet {
+  id          String       @id @default(cuid())
+  demandeId   String       @unique
+  demande     Demande      @relation(fields: [demandeId], references: [id])
+  offreId     String       @unique
+  offre       Offre        @relation(fields: [offreId], references: [id])
+  
+  statut      StatutProjet @default(EN_COURS)
+  livrables   String[]     // URLs fichiers livrés
+  
+  paiement    Paiement?
+  messages    Message[]
+  avis        Avis?
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("projets")
+}
+
+enum StatutProjet {
+  EN_COURS
+  LIVRAISON_EN_ATTENTE
+  VALIDE
+  LITIGE
+  ANNULE
+}
+
+// ═══════════════════════════════════════
+//  MESSAGERIE
+// ═══════════════════════════════════════
+
+model Message {
+  id        String   @id @default(cuid())
+  projetId  String
+  projet    Projet   @relation(fields: [projetId], references: [id])
+  senderId  String
+  sender    User     @relation("MessagesSent", fields: [senderId], references: [id])
+  
+  contenu   String
+  fichiers  String[] // URLs pièces jointes
+  lu        Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+// ═══════════════════════════════════════
+//  PAIEMENTS (Chargily Pay)
+// ═══════════════════════════════════════
+
+model Paiement {
+  id              String        @id @default(cuid())
+  projetId        String        @unique
+  projet          Projet        @relation(fields: [projetId], references: [id])
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  
+  montant         Int           // en DA
+  commission      Int           // 12% plateforme
+  montantFreelance Int          // montant - commission
+  statut          StatutPaiement @default(EN_ATTENTE)
+  
+  // Chargily Pay
+  chargilyId      String?       // ID transaction Chargily
+  checkoutUrl     String?       // URL de paiement
+  methode         String?       // "edahabia" | "cib"
+  
+  payeAt          DateTime?
+  libereAt        DateTime?     // quand le projet est validé
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("paiements")
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  PAYE
+  LIBERE
+  REMBOURSE
+  ECHEC
+}
+
+// ═══════════════════════════════════════
+//  AVIS & NOTES
+// ═══════════════════════════════════════
+
+model Avis {
+  id          String  @id @default(cuid())
+  projetId    String  @unique
+  projet      Projet  @relation(fields: [projetId], references: [id])
+  auteurId    String
+  auteur      User    @relation("AvisDonnes", fields: [auteurId], references: [id])
+  cibleId     String
+  cible       User    @relation("AvisRecus", fields: [cibleId], references: [id])
+  
+  note        Int     // 1 à 5
+  commentaire String
+  
+  createdAt   DateTime @default(now())
+
+  @@map("avis")
+}
+
+// ═══════════════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════════════
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  type      String   // "nouvelle_offre" | "offre_acceptee" | "message" | "paiement" etc.
+  titre     String
+  message   String
+  lien      String?
+  lu        Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
