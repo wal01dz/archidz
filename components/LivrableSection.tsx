@@ -1,1 +1,1 @@
-notepad components\LivrableSection.tsx
+export default function LivrableSection() { return null; }
