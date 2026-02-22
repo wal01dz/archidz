@@ -14,27 +14,11 @@
   --gold-l: #d4aa4a;
   --gold-pale: #f5e9c8;
   --rust: #c0481e;
-  --green: #1a6b3a;
   --muted: #8a8070;
   --border: rgba(184,146,42,0.22);
   --card: #ffffff;
   --shadow: 0 4px 32px rgba(18,16,14,0.08);
   --nav-bg: rgba(247,244,238,0.92);
-}
-
-[data-theme="dark"] {
-  --bg: #0f0e0c;
-  --bg2: #181612;
-  --ink: #f0ece4;
-  --ink2: #c8c0b0;
-  --gold: #d4aa4a;
-  --gold-l: #e8c870;
-  --gold-pale: rgba(212,170,74,0.15);
-  --muted: #6a6058;
-  --border: rgba(212,170,74,0.18);
-  --card: #1c1a16;
-  --shadow: 0 4px 32px rgba(0,0,0,0.35);
-  --nav-bg: rgba(15,14,12,0.92);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,15 +29,12 @@ body {
   color: var(--ink);
   font-family: 'Instrument Sans', sans-serif;
   overflow-x: hidden;
-  transition: background 0.4s, color 0.4s;
 }
 
-/* Grid background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: var(--tw-gradient-stops);
   background-image: 
     linear-gradient(rgba(184,146,42,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(184,146,42,0.04) 1px, transparent 1px);
@@ -64,67 +45,42 @@ body::before {
 
 @layer components {
   .btn-primary {
-    @apply bg-gold text-white px-7 py-4 rounded-sm font-syne font-bold text-sm uppercase tracking-wider
-           shadow-gold hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-gold-lg
-           transition-all duration-200 inline-block relative overflow-hidden;
+    @apply bg-gold text-white px-7 py-4 rounded-sm font-syne font-bold text-sm uppercase tracking-wider shadow-gold hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-gold-lg transition-all duration-200 inline-block;
   }
-
   .btn-secondary {
-    @apply bg-transparent text-ink px-7 py-4 rounded-sm font-syne font-semibold text-sm uppercase tracking-wider
-           border border-[var(--border)] hover:border-gold hover:text-gold hover:-translate-y-0.5
-           transition-all duration-200 inline-block;
+    @apply bg-transparent text-ink px-7 py-4 rounded-sm font-syne font-semibold text-sm uppercase tracking-wider border border-[var(--border)] hover:border-gold hover:text-gold hover:-translate-y-0.5 transition-all duration-200 inline-block;
   }
-
   .card {
-    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-card
-           transition-all duration-300;
+    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-card transition-all duration-300;
   }
-
   .card-hover {
     @apply hover:-translate-y-1.5 hover:shadow-card-hover;
   }
-
   .section-label {
     @apply text-xs tracking-[0.16em] uppercase text-gold mb-3 font-syne;
   }
-
   .section-title {
     @apply font-syne text-3xl md:text-4xl font-extrabold leading-tight tracking-tight mb-12 text-[var(--ink)];
   }
-
   .badge {
     @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-syne font-bold uppercase tracking-wider;
   }
-
   .badge-gold {
     @apply badge bg-gold-pale text-gold border border-[var(--border)];
   }
-
   .badge-rust {
     @apply badge bg-rust/10 text-rust;
   }
-
-  .badge-green {
-    @apply badge bg-green-50 text-green-700;
-  }
-
   .input {
-    @apply w-full bg-[var(--bg2)] border border-[var(--border)] rounded-sm px-4 py-3
-           text-[var(--ink)] font-instrument text-sm outline-none
-           focus:border-gold focus:ring-1 focus:ring-gold/30
-           transition-all duration-200 placeholder:text-[var(--muted)];
+    @apply w-full bg-[var(--bg2)] border border-[var(--border)] rounded-sm px-4 py-3 text-[var(--ink)] font-instrument text-sm outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-all duration-200 placeholder:text-[var(--muted)];
   }
-
   .label {
     @apply block text-xs font-syne font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5;
   }
 }
 
-/* Scrollbar custom */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-
-/* Selection */
-::selection { background: var(--gold-pale); color: var(--gold); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(184,146,42,0.3); }
+::selection { background: rgba(184,146,42,0.2); color: #b8922a; }
