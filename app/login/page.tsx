@@ -1,13 +1,11 @@
 "use client";
-// app/login/page.tsx
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -74,15 +72,13 @@ function LoginForm() {
 
             {error && (
               <div style={{ background: "rgba(255,60,0,0.1)", border: "1px solid rgba(255,60,0,0.3)", padding: "12px 16px", marginBottom: "20px", color: "#ff3c00", fontSize: "12px", fontFamily: "'Space Mono', monospace" }}>
-                ✗ {error}
+                {error}
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{ width: "100%", padding: "14px", background: loading ? "#555" : "#e8ff00", color: "black", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Space Mono', monospace" }}>
-              {loading ? "CONNEXION..." : "SE CONNECTER →"}
+            <button type="submit" disabled={loading}
+              style={{ width: "100%", padding: "14px", background: loading ? "#333" : "#e8ff00", color: loading ? "#888" : "black", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Space Mono', monospace" }}>
+              {loading ? "CONNEXION..." : "SE CONNECTER"}
             </button>
           </form>
 
@@ -97,13 +93,5 @@ function LoginForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   );
 }
