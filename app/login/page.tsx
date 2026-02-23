@@ -1,17 +1,15 @@
-// app/login/page.tsx
 "use client";
+// app/login/page.tsx
 import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, AlertCircle, ArrowRight } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,125 +17,83 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     const result = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
-
     if (result?.error) {
       setError("Email ou mot de passe incorrect");
       setLoading(false);
     } else {
-      router.push(searchParams.get("callbackUrl") || "/dashboard");
+      router.push("/dashboard");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[var(--bg)]">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
-        <div className="absolute bottom-1/4 -left-32 w-96 h-96 rounded-full bg-rust/5 blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <Link href="/" className="font-syne font-extrabold text-3xl text-[var(--ink)] inline-block">
-            Archi<span className="text-gold">DZ</span>
+    <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "'Space Grotesk', sans-serif" }}>
+      <div style={{ width: "100%", maxWidth: "400px" }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <Link href="/" style={{ fontWeight: 700, fontSize: "24px", color: "#f0f0f0", textDecoration: "none" }}>
+            ARCHI<span style={{ color: "#e8ff00" }}>DZ</span>
           </Link>
-          <p className="text-[var(--muted)] mt-2 text-sm">Connecte-toi à ton compte</p>
+          <p style={{ color: "#555", fontSize: "12px", marginTop: "8px", fontFamily: "'Space Mono', monospace" }}>
+            // CONNEXION
+          </p>
         </div>
 
-        <div className="card p-8">
-          {searchParams.get("registered") && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-sm mb-6">
-              <span className="text-green-600 text-sm">✅ Compte créé ! Tu peux te connecter.</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="label">Email</label>
+        <div style={{ border: "2px solid #1a1a1a", padding: "40px", background: "#111" }}>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "#555", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "8px", fontFamily: "'Space Mono', monospace" }}>
+                EMAIL
+              </label>
               <input
                 type="email"
-                className="input"
-                placeholder="ton@email.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="ton@email.com"
                 required
+                style={{ width: "100%", background: "#0a0a0a", border: "2px solid #2a2a2a", padding: "12px 16px", color: "#f0f0f0", fontSize: "14px", outline: "none", fontFamily: "'Space Grotesk', sans-serif", boxSizing: "border-box" }}
               />
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="label !mb-0">Mot de passe</label>
-                <Link href="/forgot-password" className="text-xs text-gold hover:text-gold-light transition-colors">
-                  Oublié ?
-                </Link>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPwd ? "text" : "password"}
-                  className="input pr-11"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
-                >
-                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
+            <div style={{ marginBottom: "24px" }}>
+              <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "#555", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "8px", fontFamily: "'Space Mono', monospace" }}>
+                MOT DE PASSE
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                style={{ width: "100%", background: "#0a0a0a", border: "2px solid #2a2a2a", padding: "12px 16px", color: "#f0f0f0", fontSize: "14px", outline: "none", fontFamily: "'Space Grotesk', sans-serif", boxSizing: "border-box" }}
+              />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-rust/10 border border-rust/20 rounded-sm">
-                <AlertCircle size={14} className="text-rust flex-shrink-0" />
-                <p className="text-sm text-rust">{error}</p>
+              <div style={{ background: "rgba(255,60,0,0.1)", border: "1px solid rgba(255,60,0,0.3)", padding: "12px 16px", marginBottom: "20px", color: "#ff3c00", fontSize: "12px", fontFamily: "'Space Mono', monospace" }}>
+                ✗ {error}
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Connexion...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  Se connecter <ArrowRight size={16} />
-                </span>
-              )}
+              style={{ width: "100%", padding: "14px", background: loading ? "#555" : "#e8ff00", color: "black", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Space Mono', monospace" }}>
+              {loading ? "CONNEXION..." : "SE CONNECTER →"}
             </button>
           </form>
 
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-[var(--border)]" />
-            <span className="text-xs text-[var(--muted)] font-syne">OU</span>
-            <div className="flex-1 h-px bg-[var(--border)]" />
+          <div style={{ textAlign: "center", marginTop: "24px", paddingTop: "24px", borderTop: "1px solid #1a1a1a" }}>
+            <p style={{ fontSize: "12px", color: "#555" }}>
+              Pas de compte ?{" "}
+              <Link href="/register" style={{ color: "#e8ff00", fontWeight: 700, textDecoration: "none" }}>
+                S'INSCRIRE
+              </Link>
+            </p>
           </div>
-
-          <p className="text-center text-sm text-[var(--muted)]">
-            Pas encore de compte ?{" "}
-            <Link href="/register" className="text-gold hover:text-gold-light font-semibold transition-colors">
-              S'inscrire
-            </Link>
-          </p>
-        </div>
-
-        <div className="flex items-center justify-center gap-4 mt-6 text-xs text-[var(--muted)]">
-          <span>🔒 Connexion sécurisée</span>
-          <span>·</span>
-          <span>🇩🇿 Plateforme 100% algérienne</span>
         </div>
       </div>
     </div>
