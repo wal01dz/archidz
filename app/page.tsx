@@ -1,4 +1,4 @@
-// app/page.tsx — BRUTALIST HOME
+// app/page.tsx — Server Component, no event handlers
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
@@ -13,22 +13,19 @@ export default function HomePage() {
           <p style={{ color: "#555", fontSize: "11px", fontFamily: "'Space Mono', monospace", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: "24px" }}>
             🇩🇿 Plateforme 100% Algérienne — Beta
           </p>
-
-          <h1 style={{ fontWeight: 700, lineHeight: 0.9, letterSpacing: "-2px", marginBottom: "32px", color: "#f0f0f0" }}>
-            <span style={{ fontSize: "clamp(3rem, 10vw, 7rem)", display: "block" }}>LA MARKETPLACE</span>
+          <h1 style={{ fontWeight: 700, lineHeight: 0.9, letterSpacing: "-2px", marginBottom: "32px" }}>
+            <span style={{ fontSize: "clamp(3rem, 10vw, 7rem)", display: "block", color: "#f0f0f0" }}>LA MARKETPLACE</span>
             <span style={{ fontSize: "clamp(3rem, 10vw, 7rem)", display: "block", WebkitTextStroke: "2px #e8ff00", WebkitTextFillColor: "transparent" }}>DES CRÉATIFS</span>
-            <span style={{ fontSize: "clamp(3rem, 10vw, 7rem)", display: "block" }}>ALGÉRIENS.</span>
+            <span style={{ fontSize: "clamp(3rem, 10vw, 7rem)", display: "block", color: "#f0f0f0" }}>ALGÉRIENS.</span>
           </h1>
-
           <p style={{ color: "#555", maxWidth: "480px", lineHeight: 1.7, marginBottom: "40px", fontFamily: "'Space Mono', monospace", fontSize: "13px" }}>
-            // Rendus 3D, planches, mémoires, portfolio — Poste ta demande, reçois des offres compétitives. Paiement sécurisé via Baridi Mob.
+            // Rendus 3D, planches, mémoires, portfolio — Poste ta demande, reçois des offres compétitives.
           </p>
-
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#e8ff00", color: "black", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", textDecoration: "none" }}>
+            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", padding: "14px 32px", background: "#e8ff00", color: "black", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", textDecoration: "none" }}>
               COMMENCER GRATUITEMENT →
             </Link>
-            <Link href="/demandes" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "transparent", color: "#888", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", textDecoration: "none", border: "2px solid #2a2a2a" }}>
+            <Link href="/demandes" style={{ display: "inline-flex", alignItems: "center", padding: "14px 32px", background: "transparent", color: "#888", fontWeight: 700, fontSize: "12px", letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Space Mono', monospace", textDecoration: "none", border: "2px solid #2a2a2a" }}>
               VOIR LES DEMANDES
             </Link>
           </div>
@@ -50,7 +47,6 @@ export default function HomePage() {
           <h2 style={{ fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "#f0f0f0", marginBottom: "48px", lineHeight: 1 }}>
             TOUS LES SERVICES<br />DONT TU AS BESOIN.
           </h2>
-
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "2px", background: "#1a1a1a" }}>
             {[
               { emoji: "🏗️", title: "RENDU 3D & VISUALISATION", desc: "Perspectives, animations, rendu réaliste.", price: "Dès 3 000 DA" },
@@ -60,9 +56,7 @@ export default function HomePage() {
               { emoji: "🎨", title: "PORTFOLIO & CV CRÉATIF", desc: "Portfolio architecte, CV design, book.", price: "Dès 2 500 DA" },
               { emoji: "🖨️", title: "IMPRESSION & RELIURE", desc: "Impression grand format, reliure mémoires.", price: "Dès 800 DA" },
             ].map((s) => (
-              <div key={s.title} style={{ background: "#111", padding: "32px", transition: "all 0.15s" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#161616")}
-                onMouseLeave={e => (e.currentTarget.style.background = "#111")}>
+              <div key={s.title} style={{ background: "#111", padding: "32px" }}>
                 <p style={{ fontSize: "2rem", marginBottom: "16px" }}>{s.emoji}</p>
                 <h3 style={{ fontWeight: 700, fontSize: "13px", color: "#f0f0f0", marginBottom: "8px", letterSpacing: "0.05em" }}>{s.title}</h3>
                 <p style={{ fontSize: "12px", color: "#555", lineHeight: 1.6, marginBottom: "16px" }}>{s.desc}</p>
@@ -78,7 +72,6 @@ export default function HomePage() {
           <h2 style={{ fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "#f0f0f0", marginBottom: "48px", lineHeight: 1 }}>
             SIMPLE.<br />RAPIDE.<br />SÉCURISÉ.
           </h2>
-
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "2px", background: "#1a1a1a" }}>
             {[
               { num: "01", icon: "📝", title: "POSTE TA DEMANDE", desc: "Décris ton projet, fixe ton budget. Gratuit." },
@@ -120,14 +113,13 @@ export default function HomePage() {
 
         {/* Footer */}
         <footer style={{ borderTop: "2px solid #1a1a1a", padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-          <span style={{ fontWeight: 700, fontSize: "16px", color: "#f0f0f0", fontFamily: "'Space Grotesk', sans-serif" }}>
+          <span style={{ fontWeight: 700, fontSize: "16px", color: "#f0f0f0" }}>
             ARCHI<span style={{ color: "#e8ff00" }}>DZ</span>
           </span>
           <span style={{ fontSize: "10px", color: "#333", fontFamily: "'Space Mono', monospace" }}>
             © 2026 ARCHIDZ — MARKETPLACE DES CRÉATIFS ALGÉRIENS 🇩🇿
           </span>
         </footer>
-
       </main>
     </>
   );
