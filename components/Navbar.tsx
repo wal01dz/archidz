@@ -1,157 +1,184 @@
-// components/Navbar.tsx
 "use client";
-import { useState, useEffect } from "react";
+// components/Navbar.tsx
+import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Bell, Menu, X, ChevronDown } from "lucide-react";
+import { Bell, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [userMenu, setUserMenu] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-  };
+  const role = (session?.user as any)?.role;
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-16 py-4
-        bg-[var(--nav-bg)] backdrop-blur-xl border-b border-[var(--border)]
-        transition-all duration-300 ${scrolled ? "shadow-[0_4px_32px_rgba(18,16,14,0.12)]" : ""}`}
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-16 py-4
+      bg-[var(--nav-bg,rgba(10,10,10,0.95))] backdrop-blur-xl border-b border-[var(--border,#2a2a2a)]">
+
       {/* Logo */}
-      <Link href="/" className="font-syne font-extrabold text-2xl tracking-tight flex items-center gap-2 text-[var(--ink)]">
-        Archi<span className="text-gold">DZ</span>
-        <span className="hidden sm:inline text-[10px] font-syne font-bold uppercase tracking-[0.15em] text-[var(--muted)] ml-1">
-          🇩🇿 Beta
-        </span>
+      <Link href="/" className="font-bold text-xl tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        ARCHI<span style={{ color: "#e8ff00" }}>DZ</span>
       </Link>
 
-      {/* Nav links — desktop */}
-      <ul className="hidden lg:flex gap-7 list-none">
+      {/* Desktop nav */}
+      <ul className="hidden lg:flex gap-8 list-none">
         {[
           ["Demandes", "/demandes"],
-          ["Freelances", "/freelances"],
           ["Comment ça marche", "/#comment"],
-          ["Tarifs", "/#pricing"],
         ].map(([label, href]) => (
           <li key={href}>
-            <Link
-              href={href}
-              className="text-[var(--ink2)] text-sm opacity-60 hover:opacity-100 hover:text-gold transition-all duration-200"
-            >
+            <Link href={href}
+              className="text-sm font-medium transition-colors duration-150"
+              style={{ color: "#888", fontFamily: "'Space Grotesk', sans-serif" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#f0f0f0")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#888")}>
               {label}
             </Link>
           </li>
         ))}
       </ul>
 
-      {/* Right actions */}
+      {/* Right side */}
       <div className="flex items-center gap-3">
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--border)]
-            bg-[var(--bg2)] text-base transition-all hover:border-gold"
-          title="Changer le thème"
-        >
-          {theme === "light" ? "🌙" : "☀️"}
-        </button>
-
         {session ? (
           <>
-            {/* Notifications */}
-            <Link
-              href="/dashboard/notifications"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--border)]
-                bg-[var(--bg2)] relative hover:border-gold transition-all"
-            >
-              <Bell size={15} className="text-[var(--muted)]" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-rust rounded-full" />
+            {/* Notif bell */}
+            <Link href="/dashboard/notifications"
+              className="w-9 h-9 border-2 flex items-center justify-center transition-all"
+              style={{ borderColor: "#2a2a2a", color: "#888" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#e8ff00";
+                (e.currentTarget as HTMLElement).style.color = "#e8ff00";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#2a2a2a";
+                (e.currentTarget as HTMLElement).style.color = "#888";
+              }}>
+              <Bell size={14} />
             </Link>
 
             {/* User menu */}
-            <div className="relative group">
-              <button className="flex items-center gap-2 px-3 py-2 rounded-sm border border-[var(--border)]
-                bg-[var(--bg2)] hover:border-gold transition-all">
-                <div className="w-6 h-6 rounded-full bg-gold-pale flex items-center justify-center">
-                  <span className="text-xs font-syne font-bold text-gold">
-                    {session.user?.name?.[0]?.toUpperCase()}
-                  </span>
+            <div className="relative">
+              <button
+                onClick={() => setUserMenu(!userMenu)}
+                className="flex items-center gap-2 px-3 py-2 border-2 transition-all text-sm font-bold"
+                style={{
+                  borderColor: userMenu ? "#e8ff00" : "#2a2a2a",
+                  color: userMenu ? "#e8ff00" : "#888",
+                  background: "transparent",
+                  fontFamily: "'Space Mono', monospace",
+                }}>
+                <div className="w-5 h-5 flex items-center justify-center text-xs font-bold"
+                  style={{ background: "#e8ff00", color: "black" }}>
+                  {session.user?.name?.[0]?.toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-[var(--ink)] hidden sm:block">
-                  {session.user?.name?.split(" ")[0]}
-                </span>
-                <ChevronDown size={13} className="text-[var(--muted)]" />
+                {session.user?.name?.split(" ")[0]?.toUpperCase()}
               </button>
 
-              {/* Dropdown */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--card)] border border-[var(--border)]
-                rounded-lg shadow-card opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                transition-all duration-200 translate-y-1 group-hover:translate-y-0">
-                <div className="p-3 border-b border-[var(--border)]">
-                  <p className="text-xs text-[var(--muted)] font-syne uppercase tracking-wider">Connecté en tant que</p>
-                  <p className="text-sm font-medium text-[var(--ink)] mt-0.5">{session.user?.name}</p>
-                </div>
-                <div className="p-2">
-                  <Link href="/dashboard" className="block px-3 py-2 text-sm text-[var(--ink2)] hover:text-gold hover:bg-gold-pale rounded-sm transition-all">
-                    Mon Dashboard
+              {userMenu && (
+                <div className="absolute right-0 top-full mt-1 w-48 border-2 z-50"
+                  style={{ background: "#111", borderColor: "#2a2a2a" }}>
+                  <Link href="/dashboard"
+                    onClick={() => setUserMenu(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b"
+                    style={{ color: "#888", borderColor: "#1e1e1e", fontFamily: "'Space Mono', monospace" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#e8ff00")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "#888")}>
+                    <LayoutDashboard size={12} /> DASHBOARD
                   </Link>
-                  <Link href="/dashboard/profil" className="block px-3 py-2 text-sm text-[var(--ink2)] hover:text-gold hover:bg-gold-pale rounded-sm transition-all">
-                    Mon Profil
+                  <Link href="/dashboard/profil"
+                    onClick={() => setUserMenu(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b"
+                    style={{ color: "#888", borderColor: "#1e1e1e", fontFamily: "'Space Mono', monospace" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#e8ff00")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "#888")}>
+                    <User size={12} /> MON PROFIL
                   </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full text-left px-3 py-2 text-sm text-rust hover:bg-rust/5 rounded-sm transition-all"
-                  >
-                    Déconnexion
+                    className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all"
+                    style={{ color: "#888", fontFamily: "'Space Mono', monospace" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#ff3c00")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "#888")}>
+                    <LogOut size={12} /> DÉCONNEXION
                   </button>
                 </div>
-              </div>
+              )}
             </div>
           </>
         ) : (
-          <>
-            <Link href="/login" className="text-sm font-medium text-[var(--ink)] opacity-60 hover:opacity-100 transition-all hidden sm:block">
-              Connexion
+          <div className="flex items-center gap-2">
+            <Link href="/login"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-widest border-2 transition-all"
+              style={{ borderColor: "#2a2a2a", color: "#888", fontFamily: "'Space Mono', monospace" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#e8ff00";
+                (e.currentTarget as HTMLElement).style.color = "#e8ff00";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#2a2a2a";
+                (e.currentTarget as HTMLElement).style.color = "#888";
+              }}>
+              CONNEXION
             </Link>
-            <Link href="/register" className="btn-primary text-xs px-5 py-2.5">
-              Commencer →
+            <Link href="/register"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all"
+              style={{ background: "#e8ff00", color: "black", fontFamily: "'Space Mono', monospace" }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+              S'INSCRIRE
             </Link>
-          </>
+          </div>
         )}
 
-        {/* Mobile menu button */}
+        {/* Mobile toggle */}
         <button
-          className="lg:hidden w-9 h-9 flex items-center justify-center border border-[var(--border)] rounded-sm"
           onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          className="lg:hidden w-9 h-9 border-2 flex items-center justify-center"
+          style={{ borderColor: "#2a2a2a", color: "#888" }}>
+          {menuOpen ? <X size={14} /> : <Menu size={14} />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-[var(--card)] border-b border-[var(--border)] p-6 lg:hidden">
-          <ul className="space-y-4">
-            {[["Demandes", "/demandes"], ["Freelances", "/freelances"], ["Comment ça marche", "/#comment"]].map(([label, href]) => (
-              <li key={href}>
-                <Link href={href} className="text-[var(--ink)] font-medium" onClick={() => setMenuOpen(false)}>
-                  {label}
+        <div className="absolute top-full left-0 right-0 border-b-2 lg:hidden"
+          style={{ background: "#0a0a0a", borderColor: "#2a2a2a" }}>
+          <div className="px-6 py-4 space-y-3">
+            <Link href="/demandes" onClick={() => setMenuOpen(false)}
+              className="block text-sm font-bold uppercase tracking-widest py-2"
+              style={{ color: "#888", fontFamily: "'Space Mono', monospace" }}>
+              DEMANDES
+            </Link>
+            {session ? (
+              <>
+                <Link href="/dashboard" onClick={() => setMenuOpen(false)}
+                  className="block text-sm font-bold uppercase tracking-widest py-2"
+                  style={{ color: "#888", fontFamily: "'Space Mono', monospace" }}>
+                  DASHBOARD
                 </Link>
-              </li>
-            ))}
-          </ul>
+                <button onClick={() => signOut({ callbackUrl: "/" })}
+                  className="block text-sm font-bold uppercase tracking-widest py-2 text-left w-full"
+                  style={{ color: "#ff3c00", fontFamily: "'Space Mono', monospace" }}>
+                  DÉCONNEXION
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMenuOpen(false)}
+                  className="block text-sm font-bold uppercase tracking-widest py-2"
+                  style={{ color: "#888", fontFamily: "'Space Mono', monospace" }}>
+                  CONNEXION
+                </Link>
+                <Link href="/register" onClick={() => setMenuOpen(false)}
+                  className="block text-sm font-bold uppercase tracking-widest py-2"
+                  style={{ color: "#e8ff00", fontFamily: "'Space Mono', monospace" }}>
+                  S'INSCRIRE
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </nav>
