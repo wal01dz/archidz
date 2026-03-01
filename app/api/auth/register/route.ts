@@ -18,21 +18,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = registerSchema.parse(body);
 
-    // Vérifier si email déjà utilisé
     const existing = await prisma.user.findUnique({
       where: { email: data.email },
     });
     if (existing) {
-      return NextResponse.json(
-        { error: "Cet email est déjà utilisé" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cet email est déjà utilisé" }, { status: 400 });
     }
 
-    // Hasher le mot de passe
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Créer l'utilisateur
     const user = await prisma.user.create({
       data: {
         name: data.name,
@@ -42,16 +36,9 @@ export async function POST(req: NextRequest) {
         wilaya: data.wilaya,
         phone: data.phone,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
+      select: { id: true, name: true, email: true, role: true, createdAt: true },
     });
 
-    // Si freelance, créer le profil vide
     if (data.role === "FREELANCE") {
       await prisma.freelanceProfile.create({
         data: {
@@ -69,7 +56,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ user, message: "Compte créé avec succès" }, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: err.errors[0].message }, { status: 400 });
+      return NextResponse.json({ error: err.issues[0].message }, { status: 400 });
     }
     console.error("[REGISTER ERROR]", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
